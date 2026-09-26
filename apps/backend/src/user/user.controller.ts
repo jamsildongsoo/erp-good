@@ -1,34 +1,48 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UserService } from './user.service.js';
-import { CreateUserDto } from './dto/create-user.dto.js';
-import { UpdateUserDto } from './dto/update-user.dto.js';
+import type { LoginInfo } from '@shared';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(
+    @CurrentUser() user: LoginInfo,
+    @Body() createUserDto: CreateUserDto
+  ) {
+    return this.userService.create(user.companyId, createUserDto);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(
+    @CurrentUser() user: LoginInfo
+  ) {
+    return this.userService.findAll(user.companyId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  @Get(':userId')
+  findOne(
+    @CurrentUser() user: LoginInfo,
+    @Param('userId') userId: string) {
+    return this.userService.findOne(user.companyId, userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @Patch(':userId')
+  update(
+    @CurrentUser() user: LoginInfo,
+    @Param('userId') userId: string,
+    @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(user.companyId, userId, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Delete(':userId')
+  remove(
+    @CurrentUser() user: LoginInfo,
+    @Param('userId') userId: string) {
+    return this.userService.remove(user.companyId, userId);
   }
 }

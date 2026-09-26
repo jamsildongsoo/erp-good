@@ -2,11 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository, ILike } from 'typeorm';
-import { User } from './entities/user.entity.js';
+import { User } from './entities/user.entity';
 
 // Ensure the create method is marked as async to use await
-import { CreateUserDto } from './dto/create-user.dto.js';
-import { UpdateUserDto } from './dto/update-user.dto.js';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<{success: boolean}> {
+  async create(companyId: string, createUserDto: CreateUserDto): Promise<{success: boolean}> {
 
     const {password, ...rest} = createUserDto;
     //password hashing
@@ -24,6 +24,7 @@ export class UserService {
     //hash된 비밀번호 합치기
     const user = this.userRepository.create({
       ...rest,
+      companyId,
       password: hashedPassword,
     });
     await this.userRepository.save(user);
@@ -31,19 +32,19 @@ export class UserService {
     return Promise.resolve({success: true});
   }
 
-  findAll() {
-    return `This action returns all user`;
+  findAll(companyId: string) {
+    return `This action returns all user for company ${companyId}`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(companyId: string, userId: string) {
+    return `This action returns a #${userId} user for company ${companyId}`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(companyId: string, userId: string, updateUserDto: UpdateUserDto) {
+    return `This action updates a #${userId} user for company ${companyId}`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(companyId: string, userId: string) {
+    return `This action removes a #${userId} user for company ${companyId}`;
   }
 }

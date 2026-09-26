@@ -2,10 +2,11 @@
 import { IsString, IsEmail, IsNotEmpty, MaxLength, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty({ message: '회사 ID는 필수입니다.' })
-  @MaxLength(50)
-  companyId!: string;
+  // companyId는 현재 컨트롤러에서 주입되므로 DTO에서 제거되었습니다.
+  // @IsString()
+  // @IsNotEmpty({ message: '회사 ID는 필수입니다.' })
+  // @MaxLength(50)
+  // companyId!: string;
 
   @IsString()
   @IsNotEmpty({ message: '사용자 ID는 필수입니다.' })
